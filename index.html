@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate to Korbyn</title>
+<style>
+/* --- Animated Gradient Background --- */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    overflow-x:hidden;
+    background: #0f0f0f;
+}
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(-45deg, #ff4d4d, #6a00f4, #00d4ff, #ffea00);
+    background-size: 400% 400%;
+    animation: gradientMove 20s ease infinite;
+    z-index: -2;
+}
+@keyframes gradientMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* --- Particle Canvas --- */
+canvas#particles {
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:-1;
+}
+
+/* --- Layout & Sections --- */
+header { background: rgba(26,26,26,0.85); padding:20px; text-align:center; font-size:2em; font-weight:bold; color:#ffcc00; }
+.container { max-width:1200px; margin:auto; padding:20px; }
+.section {
+    background: rgba(26,26,26,0.85);
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+    box-shadow:0 0 15px #ffcc00;
+}
+.store-item, .leaderboard-item { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding:10px; background:#2a2a2a; border-radius:8px; }
+.store-item button { background:#ffcc00; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; font-weight:bold; }
+.goal-bar-container { background:#333; border-radius:10px; overflow:hidden; height:30px; }
+.goal-bar-fill { height:100%; background:#ffcc00; width:0%; text-align:center; line-height:30px; font-weight:bold; color:#000; }
+.spotify-section iframe { width:100%; height:80px; margin-bottom:10px; border:none; border-radius:5px; }
+a.button-link { display:inline-block; background:#ffcc00; color:#000; padding:15px 25px; border-radius:10px; font-weight:bold; text-decoration:none; margin-top:10px; box-shadow: 0 0 10px #ffcc00,0 0 20px #ffcc00,0 0 30px #ffcc00; animation: glow 2s ease-in-out infinite alternate; transition: all 0.3s ease-in-out; }
+@keyframes glow {
+    0% { box-shadow: 0 0 5px #ffcc00,0 0 10px #ffcc00,0 0 15px #ffcc00; }
+    100% { box-shadow: 0 0 15px #ffcc00,0 0 25px #ffcc00,0 0 35px #ffcc00; }
+}
+.leaderboard { max-width:400px; margin-top:10px; }
+
+/* --- Chat Styling --- */
+#chatBox { 
+    background:#1a1a1a; 
+    height:250px; 
+    overflow-y:auto; 
+    padding:10px; 
+    border-radius:8px; 
+    margin-bottom:10px; 
+    border: 2px solid #ffcc00;
+}
+.chat-message { 
+    padding:8px 12px; 
+    margin:5px 0; 
+    border-radius:15px; 
+    max-width:80%; 
+    word-wrap: break-word;
+    box-shadow: 0 0 8px #ffcc00;
+}
+.user-msg { background:#333; color:#fff; margin-left:auto; text-align:right;}
+.bot-msg { background:#ffcc00; color:#000; margin-right:auto; text-align:left;}
+#chatInput { width:75%; padding:10px; border-radius:5px; border:none; margin-right:5px; }
+#chatSendBtn { padding:10px 15px; border:none; border-radius:5px; background:#ffcc00; font-weight:bold; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<!-- Particle canvas -->
+<canvas id="particles"></canvas>
+
+<header>Donate to Korbyn</header>
+<div class="container">
+
+    <!-- Game Pass Store -->
+    <div class="section store">
+        <h2>Game Pass Store</h2>
+        <div class="store-item">
+            <span>VIP Pass - 100 Robux</span>
+            <button onclick="buyPass('VIP Pass', 100)">Buy</button>
+        </div>
+        <div class="store-item">
+            <span>Ultra Skin - 250 Robux</span>
+            <button onclick="buyPass('Ultra Skin', 250)">Buy</button>
+        </div>
+        <div class="store-item">
+            <span>Legend Pass - 500 Robux</span>
+            <button onclick="buyPass('Legend Pass', 500)">Buy</button>
+        </div>
+        <a href="https://example.com/store" target="_blank" class="button-link">Explore More Game Passes</a>
+    </div>
+
+    <!-- Spotify Section -->
+    <div class="section music-player">
+        <h2>Spotify Music</h2>
+        <div class="spotify-section">
+            <p><strong>Top Hits Playlist</strong> <a href="https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M" target="_blank" style="color:#ffcc00;margin-left:10px;">Open in Spotify</a></p>
+            <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+        </div>
+        <a href="https://example.com/spotify" target="_blank" class="button-link">Check My Spotify Playlist!</a>
+    </div>
+
+    <!-- Donation Goal -->
+    <div class="section goal-bar">
+        <h2>Donation Goal</h2>
+        <div class="goal-bar-container">
+            <div class="goal-bar-fill" id="goalBar">0%</div>
+        </div>
+        <p id="goalText">0 / 47000 Robux</p>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="section leaderboard-section">
+        <h2>Top Donors</h2>
+        <div class="leaderboard" id="leaderboard"></div>
+        <a href="https://example.com/leaderboard" target="_blank" class="button-link">See Full Leaderboard</a>
+    </div>
+
+    <!-- Chat + Discord + Local File Buttons -->
+    <div class="section chat-section">
+        <h2>Interactive Chat</h2>
+        <div id="chatBox"></div>
+        <input type="text" id="chatInput" placeholder="Type a message...">
+        <button id="chatSendBtn">Send</button>
+
+        <!-- Discord -->
+        <a href="https://discord.gg/JRMtAW2a" target="_blank" class="button-link">Join Our Community!</a>
+        <p style="text-align:center; color:#ffcc00; margin-top:5px;">Discord: <strong>lilswat53</strong></p>
+
+        <!-- Local File Test -->
+        <a href="file:///C:/Users/Korbyn/Downloads/index.html" target="_blank" class="button-link">Open Local File</a>
+    </div>
+
+    <!-- Donate Now Button -->
+    <div class="section">
+        <a href="https://your-donation-page.com" target="_blank" class="button-link">Donate Now</a>
+    </div>
+
+</div>
+
+<script>
+// Particle animation
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particles = [];
+for(let i=0;i<100;i++){
+    particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*2+1, dx: (Math.random()-0.5)/2, dy: (Math.random()-0.5)/2});
+}
+function animateParticles(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+        p.x += p.dx; p.y += p.dy;
+        if(p.x>canvas.width)p.x=0;
+        if(p.x<0)p.x=canvas.width;
+        if(p.y>canvas.height)p.y=0;
+        if(p.y<0)p.y=canvas.height;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle='rgba(255,255,255,0.5)';
+        ctx.fill();
+    });
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// Donations & leaderboard
+let totalDonations = parseInt(localStorage.getItem('totalDonations')) || 0;
+let leaderboardData = JSON.parse(localStorage.getItem('leaderboardData')) || [];
+const goal = 47000;
+function buyPass(name, amount) {
+    const username = prompt("Enter your username for leaderboard:");
+    if (!username) return alert("Username required!");
+    if (!confirm(`Are you sure you want to buy ${name} for ${amount} Robux?`)) return;
+    fetch('https://your-backend-domain.com/api/buyPass', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username, passName: name, amount: amount })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            totalDonations += amount;
+            localStorage.setItem('totalDonations', totalDonations);
+            updateGoalBar();
+            updateLeaderboard(username, amount);
+            alert(`You bought ${name}!`);
+        } else { alert(`Purchase failed: ${data.message}`); }
+    })
+    .catch(err => alert('Error connecting to Roblox API'));
+}
+function updateGoalBar() {
+    const percentage = Math.min((totalDonations / goal) * 100, 100);
+    document.getElementById('goalBar').style.width = percentage + '%';
+    document.getElementById('goalBar').textContent = Math.floor(percentage) + '%';
+    document.getElementById('goalText').textContent = `${totalDonations} / ${goal} Robux`;
+}
+function updateLeaderboard(username, amount) {
+    const existingUser = leaderboardData.find(u => u.name === username);
+    if (existingUser) existingUser.total += amount;
+    else leaderboardData.push({name: username, total: amount});
+    leaderboardData.sort((a,b)=>b.total-a.total);
+    localStorage.setItem('leaderboardData', JSON.stringify(leaderboardData));
+    renderLeaderboard();
+}
+function renderLeaderboard() {
+    const board = document.getElementById('leaderboard');
+    board.innerHTML = '';
+    leaderboardData.forEach((user,index)=>{
+        const div=document.createElement('div');
+        div.className='leaderboard-item';
+        div.textContent = `${index+1}. ${user.name} - ${user.total} Robux`;
+        board.appendChild(div);
+    });
+}
+
+// Chat
+let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+function renderChat() {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = '';
+    chatHistory.forEach(msg => {
+        const div = document.createElement('div');
+        div.textContent = msg.text;
+        div.className = 'chat-message ' + (msg.sender === 'user' ? 'user-msg' : 'bot-msg');
+        chatBox.appendChild(div);
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    if(!message) return;
+    chatHistory.push({sender:'user', text:message});
+    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+    input.value = '';
+    renderChat();
+    setTimeout(botReply, 500);
+}
+function botReply() {
+    const responses = [
+        "Thanks for chatting!",
+        "Did you know you can buy a VIP Pass above?",
+        "Keep donating to help Korbyn reach the goal!",
+        "Enjoy the Spotify tunes while you donate!",
+        "You're awesome for visiting this site!"
+    ];
+    const reply = responses[Math.floor(Math.random()*responses.length)];
+    chatHistory.push({sender:'bot', text:reply});
+    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+    renderChat();
+}
+
+document.getElementById('chatSendBtn').addEventListener('click', sendMessage);
+document.getElementById('chatInput').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') sendMessage();
+});
+
+window.addEventListener('load', ()=>{
+    updateGoalBar();
+    renderLeaderboard();
+    renderChat();
+});
+</script>
+</body>
+</html>
